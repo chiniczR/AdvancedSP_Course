@@ -23,14 +23,18 @@ function [hHatSA] = ChannelOptimization(T_m, R, sigma2, T_Max, T_Min, ...
     % Get initial estimate, received and trasmitted signal by Least Square
     [hHat, s, r, H] = ChannelEstimateLS(T_m, R, sigma2, @TwoTapChannel);
 
-    % Optimize estimate by Simulated Annealing
+    % Optimize estimate by Simulated Annealing and calculate MSE
     hHatSA = SimulatedAnnealing(hHat, T_Max, T_Min, L, MaxStay, ...
         @(h) (1/length(h)) * sum((H - h).^2)); % Currently MSE (see PROB)
     % Negative MF for maximization through minimization
     %-(s*h*r) -- PROB: MF does not return scalar!!!
-
-    % Calculate MSE of optimized estimate
     n = length(hHatSA);
     MSE_SA = (1/n) * sum((H - hHatSA).^2);
     fprintf("MSE from SA optimized estimate: %f\n", MSE_SA);
+
+    % Optimize estimate by Genetic Algorithm and calculate MSE
+    FitFunc = @(h) -(s*h*r);    % PROB: same
+    [hHatGA,~] = ga(FitFunc,1,[],[],[],[],[],[]);
+    MSE_GA = (1/n) * sum((H - hHatGA).^2);
+    fprintf("MSE from GA optimized estimate: %f\n", MSE_GA);
 end
