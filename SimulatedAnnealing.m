@@ -29,7 +29,7 @@ function [x] = SimulatedAnnealing(x0, T_Max, T_Min, L, MaxStay, ObjFunc)
     % Begin annealing process
     while T > T_Min && StayCntr < MaxStay
         for it=1:L
-            % Find new x and evaluate value of function for it
+            % Find new x and evaluate function for it
             NewX = CurrX + rand(size(CurrX));
             NewY = ObjFunc(NewX);
 
