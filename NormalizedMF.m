@@ -4,8 +4,8 @@
     Output: N/A
     Course: Advanced Acoustic  Signal Processing Techniques, 
             Lecture #4, Detection – Class I
-    Source:
-    - R. Diamant, "Closed Form Analysis of the Normalized Matched Filter 
+    Ref:
+    R. Diamant, "Closed Form Analysis of the Normalized Matched Filter 
     With a Test Case for Detection of Underwater Acoustic Signals," in IEEE 
     Access, vol. 4, pp. 8225-8235, 2016, doi: 10.1109/ACCESS.2016.2630498.
 %}

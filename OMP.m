@@ -9,7 +9,7 @@
             Lecture #3, Channel Estimation - Class II
 %}
 
-function [x] = OMP(A, b, n)
+function [x] = OMP(A, b)
     % Initialization of residue vec and index set
     r = b;
     Lambda = [];
@@ -18,30 +18,11 @@ function [x] = OMP(A, b, n)
     normc(A);
     A = unique(A', 'rows')';
 
-    % Calculate mutual coherence of matrix A - naive, but still NOT working
-    mu = 0;
-    for iCol=1:size(A,2)
-        for jCol=1:size(A,2)
-            if iCol~=jCol
-                ai = A(:,iCol);
-                aj = A(:,jCol);
-                % PROB: curr always one!!!
-                Curr = max(xcorr(ai, aj)) / (norm(ai) * norm(aj));
-                if Curr > mu
-                    mu = Curr;
-                end
-            end
-        end
-    end
-
     % Initialize sparseness
     k = 1;
 
-    % Maximum sparseness
-    kMax = floor(1/2*mu); % PROB: always zero (since mu always one)!!!
-
     % Main loop
-    while k <= kMax
+    while k <= sprank(A)/2 % kMax (Davies and Elder, Donoho and Elad)
         % Find column of A with max abs correlation to r
         lmb = 0;
         MaxCorr = 0;
@@ -62,13 +43,18 @@ function [x] = OMP(A, b, n)
 
         % Obtain k-th estimate - LS solution
         % PROB: A_Lambda is n-by-1, A_Lambda' 1-by-n -> invalid dims for *!!
-        x = inv(A_Lambda*A_Lambda') * A_Lambda' * b;
+        x = (A_Lambda \ (A_Lambda*A_Lambda')) * b;
 
         % Compute new b estimate and upated residue
-        bkHat = A_lmb * x; 
+        bkHat = A_lmb * x(k); 
         r = r - bkHat;
 
         % Increment sparseness counter
         k = k + 1;
     end
+
+    % Fill with zeros out of sparsity
+    padding = zeros(size(b));
+    padding(1:k-1) = x;
+    x = padding;
 end

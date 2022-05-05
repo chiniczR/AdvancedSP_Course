@@ -1,5 +1,5 @@
 %{ 
-    Simulated Annelaing (SA) optimization
+    Simulated Annelaing (SA) optimization for l0 sparsity reconstruction
     Input:
         x0 (num[]): initial solution
         T_Max (num): maximum temperature (initial temperature)
@@ -7,15 +7,16 @@
         L (int>0): no. of iterations under every temperature
         MaxStay (int>0): cooldown time
         ObjFunc (function): Objective function to be optimized
+        k (int): maximum sparsity
     Output:
-        x (num[]): optmized solution
+        x (num[]): optmized solution (i.e. support set)
     Course: Advanced Acoustic  Signal Processing Techniques, 
             Lecture #4, Optimization – Class II
     Based on: scikit-opt (python module for Heuristic Algorithms)
     https://github.com/guofei9987/scikit-opt/blob/master/sko/SA.py
 %}
 
-function [x] = SimulatedAnnealing(x0, T_Max, T_Min, L, MaxStay, ObjFunc)
+function [x] = SimulatedAnnealing(x0, T_Max, T_Min, L, MaxStay, ObjFunc, k)
 
     % Initialization
     BestX = x0;             % Best solution (argument)
@@ -30,15 +31,15 @@ function [x] = SimulatedAnnealing(x0, T_Max, T_Min, L, MaxStay, ObjFunc)
     while T > T_Min && StayCntr < MaxStay
         for it=1:L
             % Find new x and evaluate function for it
-            NewX = CurrX + rand(size(CurrX));
+            NewX = unique([CurrX randi(k)]);
             NewY = ObjFunc(NewX);
 
             % Metropolis criteria check
-            Delta = (NewY - CurrY); % PROB: MF does NOT return scalar!!!
+            Delta = (NewY - CurrY);
             if Delta < 0 || rand(1) < exp(-Delta/T)
                 CurrX = NewX; 
                 CurrY = NewY;
-                if (NewY) < (BestY) % PROB: same!!!
+                if (NewY) < (BestY)
                     BestX = NewX;
                     BestY = NewY;
                     StayCntr = 0;

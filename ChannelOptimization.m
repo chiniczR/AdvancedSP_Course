@@ -1,6 +1,6 @@
 %{ 
-    Optimization (maximization) of channel estimate in terms of matched 
-    filter output with Simulated Annealing (SA) and Genetic Algorithm (GA)
+    Optimization (maximization) of channel estimatation by Simulated 
+    Annealing (SA) for sparse approximation
     Input: 
         -- Channel parameters
         T_m (num): maximum time
@@ -15,27 +15,34 @@
         hHatSA (num[]): Optmized estimate by SA
     Course: Advanced Acoustic  Signal Processing Techniques, 
             Lecture #4, Optimization – Class II
+    Ref: 
+    Yangyang Li, Jianping Zhang, Guiling Sun, Dongxue Lu, "The Sparsity 
+    Adaptive Reconstruction Algorithm Based on Simulated Annealing for 
+    Compressed Sensing", Journal of Electrical and Computer Engineering, 
+    vol. 2019. https://doi.org/10.1155/2019/6950819
 %}
 
 function [hHatSA] = ChannelOptimization(T_m, R, sigma2, T_Max, T_Min, ...
     L, MaxStay)
 
     % Get initial estimate, received and trasmitted signal by Least Square
-    [hHat, s, r, H] = ChannelEstimateLS(T_m, R, sigma2, @TwoTapChannel);
+    [hHat, A, b, H] = ChannelEstimateLS(T_m, R, sigma2, @TwoTapChannel);
 
-    n = length(hHat);
     % Optimize estimate by Simulated Annealing and calculate MSE
-    % TO-DO: find another objective function, e.g. OMP
-    hHatSA = SimulatedAnnealing(hHat, T_Max, T_Min, L, MaxStay, ...
-        @(h) ((1/n) * sum((H - h).^2))); % Negative MF for maximization through minimization
-    %                       -- PROB: MF does not return scalar!!!
-    n = length(hHatSA);
-    MSE_SA = (1/n) * sum((H - hHatSA).^2);
-    fprintf("MSE from SA optimized estimate: %f\n", MSE_SA);
+    k = sprank(A);
+    xHatSA = SimulatedAnnealing(randi(k,1,max(size(hHat))), T_Max, T_Min,...
+        L, MaxStay, @(I) norm(A(:,I)*pinv(A(:,I))*b - b), 2); 
+    hHatSA = pinv(A(:,xHatSA))*b;
 
-    % Optimize estimate by Genetic Algorithm and calculate MSE
-    FitFunc = @(h) ((1/n) * sum((H - h).^2));        % PROB: same
-    [hHatGA,~] = ga(FitFunc,1,[],[],[],[],[],[]);
-    MSE_GA = (1/n) * sum((H - hHatGA).^2);
-    fprintf("MSE from GA optimized estimate: %f\n", MSE_GA);
+    % If needed pad with zeros
+    n = length(hHatSA);
+    if n ~= length(H)
+        filler = zeros(size(H));
+        filler(1:n) = hHatSA;
+        hHatSA = filler;
+    end
+
+    % Display MSE of channel estimate from SA
+    MSE_SA = (1/n) * sum((sort(H) - sort(hHatSA)).^2);
+    fprintf("MSE from SA optimized estimate: %f\n", MSE_SA);
 end

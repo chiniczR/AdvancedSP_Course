@@ -13,10 +13,10 @@
             Lecture #3, Channel Estimation
 %}
 
-function [hHat, Pilot, Y, H] = ChannelEstimateLS(T_m, R, sigma2, ChannelModel)
+function [hHat, X, Y, H] = ChannelEstimateLS(T_m, R, sigma2, ChannelModel)
     % Basic definitions
-%     t = 0:1/(T_m*10):T_m;
-    t = 0:1:T_m;
+    t = 0:1/(T_m*2):T_m;
+%     t = 0:1:T_m;
     n = length(t); 
     Pilot = square(2*pi*t*10);
     X = zeros(n); % Input matrix with n pilots

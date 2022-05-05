@@ -12,9 +12,9 @@
             Lecture #3, Channel Estimation - Class II
 %}
 
-function [MSE_LS, MSE_OMP] = ChannelEstimation2(T_m, R, sigma2)
+function [MAE_LS, MAE_OMP] = ChannelEstimation2(T_m, R, sigma2)
     % Basic definitions
-    t = 0:1/100:T_m;
+    t = 0:1/10:T_m;
     n = length(t); 
     Pilot = square(2*pi*t*10);
     %[ones(ceil(n/2),1); -ones(floor(n/2),1)];
@@ -30,16 +30,16 @@ function [MSE_LS, MSE_OMP] = ChannelEstimation2(T_m, R, sigma2)
     hHat = inv(X) * Y; % Matrix inverse MATLAB docs
 
     % Channel Estimation with OMP
-    hOMP = OMP(X, Y, n);
+    hOMP = OMP(X, Y);
 
-    % Comparison with MSE
-    MSE_LS = (1/n) * sum((H - hHat).^2);
-    MSE_OMP = (1/n) * sum((H - hOMP).^2);
+    % Comparison with MAE
+    MAE_LS = mean(abs(H - hHat));
+    MAE_OMP = mean(abs(sort(H) - sort(hOMP)));
 
     % Display result of comparison
-    if MSE_LS > MSE_OMP
-        disp('OMP better than LS');
-    else
+    if MAE_LS < MAE_OMP
         disp('LS better than OMP');
+    else
+        disp('OMP better than LS');
     end
 end
