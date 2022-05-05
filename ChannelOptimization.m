@@ -1,6 +1,6 @@
 %{ 
-    Optimization (maximization) of channel estimatation by Simulated 
-    Annealing (SA) for sparse approximation
+    Optimization of channel estimatation by Simulated  Annealing (SA) for 
+    sparse approximation by l0 norm
     Input: 
         -- Channel parameters
         T_m (num): maximum time
