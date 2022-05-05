@@ -11,8 +11,6 @@
             non-white noise
         Pfas (num[], 0<=num(i)<=1): sorted probabilities of false alarm
         Sig (num[]): transmitted signal
-        gNoiseSample (num[]): sample of white noise
-        pNoiseSample (num[]): sample of non-white noise
     Output: 
         PdsWhite (num[], 0<=num(i)<=1): resulting probabilities of
             detection for signal within white noise
@@ -23,17 +21,13 @@
 %}
 
 function [PdsWhite, PdsNW] = EckartDetection(SigWhiteNoise, SigNW, ...
-    PresentW, PresentNW, Pfas, Sig, gNoiseSample, pNoiseSample)
+    PresentW, PresentNW, Pfas, Sig, WhiteN, NonWhiteN)
 
-    % Noise and signal spectra - TO-DO: power or freq spectrum????
-    SigSpec = abs(fft(Sig));
-    WhiteSpec = abs(fft(gNoiseSample));
-    NWSpec = abs(fft(pNoiseSample));
+    % Define filter and apply to received signal
+    % TO-DO: create colored noise with firpm (greater slope), take inverse, pad with zeros
+    SigWhiteNoise = filter(1./WhiteN,1,SigWhiteNoise);
+    SigNW = filter(1./NonWhiteN,1,SigNW);
 
-    % Apply Eckart filter to received signals
-    SigWhiteNoise = EckartFilter(SigWhiteNoise, SigSpec, WhiteSpec);
-    SigNW = EckartFilter(SigNW, SigSpec, NWSpec);
-    
     % Short-hand for length of transmitted signal
     LenY = length(Sig);
 

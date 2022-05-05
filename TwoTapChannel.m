@@ -30,7 +30,7 @@ function h = TwoTapChannel(T_m, R, sigma2)
         % Components of the impulse response
         r_p = abs(x + y*1i); % r_p = |x + yi|
         c_p = r_p * exp(1j*theta_p);
-        h(tim) = c_p;
+        h(tim) = abs(c_p);
     
         % Next tap
         tim = tim + round(length(t)/2);
