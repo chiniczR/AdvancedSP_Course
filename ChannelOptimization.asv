@@ -26,7 +26,7 @@ function [hHatSA] = ChannelOptimization(T_m, R, sigma2, T_Max, T_Min, ...
     L, MaxStay)
 
     % Get initial estimate, received and trasmitted signal by Least Square
-    [hHat, A, b, H, Z, t] = ChannelEstimateLS(T_m, R, sigma2, @TapDelayLineModel);
+    [hHat, A, b, H] = ChannelEstimateLS(T_m, R, sigma2, @TapDelayLineModel);
     Sig = diag(A);
 
     % Optimize estimate by Simulated Annealing and calculate MSE
@@ -45,18 +45,18 @@ function [hHatSA] = ChannelOptimization(T_m, R, sigma2, T_Max, T_Min, ...
 
     % Get things back to time-domain
     y = ifft(b);
-    estimate = ifft(A*hHatSA + Z);
+    estimate = ifft(X*hHat + Z);
 
     % Display difference of channel on transmitted signal
-    subplot(2, 1, 2)
+    subplot(2, 1, 1)
     plot(t,y); hold on; plot(t,estimate);
     xlabel("Time (s)")
-    title("Signal Through Original vs Estimated Channels - Simulated Annealing (SA)")
-    legend({"Original","SA Estimate"})
+    title("Signal Through Original vs Estimated Channels - Least Square (LS)")
+    legend({"Original","LS Estimate"})
 
 
     % Calculate normalized MSE on received signal
-    MSE_R_SA = (1/(n*sum(y.^2))) * sum((y - estimate).^2);
-    fprintf("MSE from transmission through SA estimated channel: %d\n", MSE_R_SA);
+    MSE_R_LS = (1/(n*sum(y.^2))) * sum((y - estimate).^2);
+    fprintf("MSE from transmission through estimated channel: %d\n", MSE_R_LS);
     
 end

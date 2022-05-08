@@ -27,10 +27,12 @@ y(2e4:3e4-1) = s + n(2e4:3e4-1);
 y(4e4:5e4-1) = s + n(4e4:5e4-1);        
 
 % Simulated channel multipath(?) propagation
-h = TapDelayLineModel(t(end),10,25);
-y = filter(h,1,y);
+% h = TapDelayLineModel(t(end),10,25);
+% y = filter(h,1,y);
 
 % Detection parameters
+%% TODO: graph detection probability by 1000 SNRs
+%% TODO: Pfa by different N
 Pf = 1e-3;                                      % Desired CFAR
 x_t = sqrt(betaincinv((1 - Pf),1/2,(N-1)/2));   % Detection threshold
 Detected = zeros(size(y));

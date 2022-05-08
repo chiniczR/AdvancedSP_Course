@@ -31,7 +31,7 @@ function [x] = SimulatedAnnealing(x0, T_Max, T_Min, L, MaxStay, ObjFunc, k)
     while T > T_Min && StayCntr < MaxStay
         for it=1:L
             % Find new x and evaluate function for it
-            NewX = unique([CurrX randi(k)]);
+            NewX = unique([CurrX randi(k)]); % Randomly add column vector
             NewY = ObjFunc(NewX);
 
             % Metropolis criteria check

@@ -37,8 +37,8 @@ function h = TwoTapChannel(T_m, R, sigma2)
     end
 
     % Display channel taps
-%     stem(t, h)
-%     xlabel("Time (s)")
-%     ylabel("Amplitude")
-%     title("Impulse on Time")
+    stem(t, h)
+    xlabel("Time (s)")
+    ylabel("Amplitude")
+    title("Impulse on Time")
 end

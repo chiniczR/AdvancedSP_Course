@@ -18,7 +18,7 @@ function h = TapDelayLineModel(T_m, R, sigma2)
     A = 20*log10(R);
     
     % Time-span
-    t = 0:1/10:T_m;
+    t = 0:1/(T_m*2):T_m;
     
     % Impulse response
     h = zeros(1,length(t));
